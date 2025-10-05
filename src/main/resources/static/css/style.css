@@ -1,0 +1,15 @@
+.participant-item {
+    display: block;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    text-decoration: none;
+    color: var(--pico-primary);
+}
+
+/* Efeito visual ao passar o mouse */
+.participant-item:hover {
+    background-color: var(--pico-muted-background-color);
+    border-color: var(--pico-primary-hover-border);
+}

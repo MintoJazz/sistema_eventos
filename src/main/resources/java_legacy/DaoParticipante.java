@@ -10,7 +10,7 @@ import negocio.Participante;
 
 public class DaoParticipante extends DaoAbstracao<Participante>{
     
-    public List<Participante> getAll() throws SQLException {
+    @Override public List<Participante> getAll() throws SQLException {
         List<Participante> lista = new ArrayList<>();
         PSQL banco = new PSQL();
         ResultSet resultSet = banco.getQuery("SELECT * FROM participante", null);
@@ -28,6 +28,8 @@ public class DaoParticipante extends DaoAbstracao<Participante>{
         return lista;
         
     }
+
+    
 
     @Override public Participante get4Id(int id) throws SQLException {
         PSQL banco = new PSQL();

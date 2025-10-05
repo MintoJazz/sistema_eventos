@@ -1,7 +1,6 @@
 package negocio;
 
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +11,24 @@ public class Participante {
     private int id;
     private String nome, cpf, email, dataNascimento;
     private Date dataNascimentoDate;
-    private List<Evento> eventosInscritos = new ArrayList<>();
-    private ArrayList<Inscricao> inscricoes = new ArrayList<>();
+    private List<Evento> eventos = new ArrayList<>();
+
+    public Participante (
+        int id,
+        String nome,
+        String cpf,
+        String email,
+        Date dataNascimento,
+        List<Evento> eventos
+    ) {
+        this.setId(id);
+        this.setNome(nome);
+        this.setDataNascimento(Formatadores.data2String(dataNascimento));
+        this.setDataNascimentoDate(dataNascimento);
+        this.setCpf(cpf);
+        this.setEmail(email);
+        this.setEventos(eventos);
+    }
 
     public Participante(
         int id,
@@ -42,8 +57,8 @@ public class Participante {
         return email;
     } public String getDataNascimento() {
         return dataNascimento;
-    } public List<Evento> getEventosInscritos() {
-        return this.eventosInscritos;
+    } public List<Evento> getEventos() {
+        return this.eventos;
     }
 
     public void setId(int id) {
@@ -58,5 +73,7 @@ public class Participante {
         this.email = email;
     } public void setDataNascimentoDate(Date dataNascimentoDate) {
         this.dataNascimentoDate = dataNascimentoDate;
+    } public void setEventos(List<Evento> eventos) {
+        this.eventos = eventos;
     }
 }

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Palestra</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+</head>
+<body>
+    <main class="container">
+        <h1>Nova Palestra</h1>
+        <form method="post">
+            <fieldset>
+                <article>
+                    <header>Informações</header>
+                    <label>
+                        Nome
+                        <input name="palestra_nome" placeholder="Nome da Palestra" autocomplete="given-name" />
+                    </label>
+                    <label>
+                        Duração (em horas)
+                        <input type="number" name="duracao" placeholder="Duração" aria-label="Number">
+                    </label>
+                    <label>
+                        Data e hora de início
+                        <input type="datetime-local" name="datetime" aria-label="Datetime local">
+                    </label>
+                    <select id="evento-palestra" name="evento-palestra" aria-label="Select your favorite cuisine..." required>
+                        <option selected disabled value="">
+                            Essa palestra pertence ao evento...
+                        </option>
+                        {{#eventos}}
+                            <option value="{{id}}"> {{nome}} </option>
+                        {{/eventos}}
+                        <!-- inserir as opções de eventos
+                        exemplo:
+                        <option>evento.nome</option> -->
+                    </select>
+                </article>
+                <article id="palestrantes">
+                    <Header>Palestrantes</Header>
+                
+                    {{#palestrantes}} 
+                        <label>
+                            <input type="checkbox" value="{{id}}"> {{nome}}
+                        </label>
+                    {{/palestrantes}}
+
+                    <!-- inserir nomes dos participantes disponíveis
+                    exemplo:
+                    <label>
+                        <input type="checkbox" name="{palestrante.nome}" /> {palestrante.nome}
+                    </label> -->
+                </article>
+            </fieldset>
+
+            <input type="submit" value="Adicionar Palestra" />
+        </form>
+
+        <script type="module" src="/js/requisicoes.js"></script>
+    </main>
+</body>
+</html>

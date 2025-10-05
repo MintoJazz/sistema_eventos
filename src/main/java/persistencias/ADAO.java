@@ -4,10 +4,26 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public abstract class ADAO<T> implements IDAO<T> {
     private Connection conexao;
     private PreparedStatement preparedStatement;
+    protected String nomeTabela;
+    protected List<String> colunasUnicas;
+
+    @Override public List<T> getAll() throws SQLException {
+        return getByQuery("SELECT * FROM " + this.nomeTabela, null);
+    }
+
+    @Override public T getById(int id) throws SQLException{
+        return get1ByParam("id", id);
+    }
+
+    public T get1ByParam(String parametro, Object valor) throws SQLException {
+        if (!this.colunasUnicas.contains(parametro)) return null;
+        return getByQuery("SELECT * FROM " + nomeTabela + " WHERE " + parametro + " = ?", valor).getFirst();
+    }
 
     public void abrir(String query, Object... parametros) throws SQLException {
         this.conexao = new Conexao().getConexao();
