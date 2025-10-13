@@ -1,5 +1,6 @@
 package persistencias;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,21 +16,27 @@ public class DAOPalestrante extends ADAO<Palestrante>{
         this.colunasUnicas = Arrays.asList("id", "cpf");
     }
 
-    @Override public List<Palestrante> getByQuery(String query, Object... parametros) throws SQLException {
-        ResultSet resultSet = this.getQuery(query, parametros);
-        List<Palestrante> lista = new ArrayList<>();
-        while (resultSet.next()) {
-            lista.add(
-                new Palestrante(
-                    resultSet.getInt("id"),
-                    resultSet.getString("nome"),
-                    resultSet.getString("biografia"),
-                    resultSet.getString("cpf")
-                )
-            );
-        }
-        this.fechar();
-        return lista;
+    @Override
+    public void setQueryAdd(Palestrante t) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setQueryAdd'");
     }
 
+    @Override
+    protected List<Palestrante> runGetQuery(PreparedStatement preparedStatement, List<Palestrante> lista)
+            throws SQLException {
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                lista.add(
+                    new Palestrante(
+                        resultSet.getInt("id"),
+                        resultSet.getString("nome"),
+                        resultSet.getString("biografia"),
+                        resultSet.getString("cpf")
+                    )
+                );
+            }
+        }
+        return lista;
+    }
 }

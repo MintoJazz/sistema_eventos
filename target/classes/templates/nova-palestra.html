@@ -11,21 +11,22 @@
 <body>
     <main class="container">
         <h1>Nova Palestra</h1>
-        <form method="post">
+        <form id="formulario" method="post" action="/palestra">
             <fieldset>
                 <article>
                     <header>Informações</header>
                     <label>
-                        Nome
-                        <input name="palestra_nome" placeholder="Nome da Palestra" autocomplete="given-name" />
+                        <label for="palestra-nome">Nome</label>
+                        <input id="palestra-nome" name="palestra-nome" placeholder="Nome da Palestra"
+                            autocomplete="given-name" />
                     </label>
                     <label>
-                        Duração (em horas)
-                        <input type="number" name="duracao" placeholder="Duração" aria-label="Number">
+                        <label for="duracao">Duração (em horas)</label>
+                        <input id="duracao" type="number" name="duracao" placeholder="Duração" aria-label="Number">
                     </label>
                     <label>
-                        Data e hora de início
-                        <input type="datetime-local" name="datetime" aria-label="Datetime local">
+                        <label for="datetime">Data e hora de início</label>
+                        <input id="datetime" type="datetime-local" name="datetime" aria-label="Datetime local">
                     </label>
                     <select id="evento-palestra" name="evento-palestra" aria-label="Select your favorite cuisine..."
                         required>
@@ -40,7 +41,9 @@
                 <article id="palestrantes">
                     <Header>Palestrantes</Header>
                     {{#palestrantes}}
-                    <label><input class="palestrante" type="checkbox" value="{{id}}"> {{nome}}</label>
+                    <label>
+                        <input class="palestrante" type="checkbox" name="palestrantes" value="{{id}}"> {{nome}}
+                    </label>
                     {{/palestrantes}}
                 </article>
             </fieldset>

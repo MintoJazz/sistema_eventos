@@ -7,4 +7,5 @@ public interface IDAO<T> {
     public abstract List<T> getAll() throws SQLException;
     public abstract T getById(int id) throws SQLException;
     public abstract List<T> getByQuery(String query, Object... parametros) throws SQLException;
+    public abstract void setQueryAdd(T t) throws SQLException;
 }

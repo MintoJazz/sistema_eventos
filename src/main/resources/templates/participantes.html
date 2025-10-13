@@ -10,31 +10,19 @@
 </head>
 
 <body>
+    <header class="container">
+        <article>
+            <h1>Participantes</h1>
+        </article>
+    </header>
 
     <main class="container">
-        <section id="participant-list">
+        <article id="participant-list">
             {{#participantes}}
             <a href="/participante/{{cpf}}" class="participant-item">{{nome}}</a>
             {{/participantes}}
-        </section>
+        </article>
     </main>
-
-    <!-- ## ✅ Página de perfil do participante com eventos inscritos
-
-    ### **Objetivo**
-
-    Criar uma página de visualização dos dados de um participante, exibindo:
-
-    * Informações pessoais (nome, CPF, e-mail, etc.)
-    * Lista de eventos nos quais está inscrito, com nome, local e data
-
-    ### **Desafio**
-
-    * Criar rota dinâmica `/participante/:cpf`
-    * Buscar os dados do participante e seus eventos via JDBC
-    * Exibir os dados em um template Mustache
-
-    --- -->
 </body>
 
 </html>

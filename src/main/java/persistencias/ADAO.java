@@ -4,13 +4,29 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ADAO<T> implements IDAO<T> {
-    private Connection conexao;
-    private PreparedStatement preparedStatement;
     protected String nomeTabela;
     protected List<String> colunasUnicas;
+    
+    protected abstract List<T> runGetQuery(PreparedStatement preparedStatement, List<T> lista) throws SQLException;
+
+    @Override public List<T> getByQuery(String query, Object... parametros) throws SQLException {
+        List<T> lista = new ArrayList<>();
+
+        try (
+            Connection conexao = new Conexao().getConexao();
+            PreparedStatement preparedStatement = conexao.prepareStatement(query);
+        ) {
+            if (parametros != null) for (int i = 0; i < parametros.length; i++) preparedStatement.setObject(i + 1, parametros[i]);
+            lista = this.runGetQuery(preparedStatement, lista);
+        }
+
+        return lista;
+    }
 
     @Override public List<T> getAll() throws SQLException {
         return getByQuery("SELECT * FROM " + this.nomeTabela, null);
@@ -25,25 +41,29 @@ public abstract class ADAO<T> implements IDAO<T> {
         return getByQuery("SELECT * FROM " + nomeTabela + " WHERE " + parametro + " = ?", valor).getFirst();
     }
 
-    public void abrir(String query, Object... parametros) throws SQLException {
-        this.conexao = new Conexao().getConexao();
-        this.preparedStatement = conexao.prepareStatement(query);
-        if (parametros != null) for (int i = 0; i < parametros.length; i++) this.preparedStatement.setObject(i + 1, parametros[i]);
-    }
-    
-    public void fechar() throws SQLException {
-        this.preparedStatement.close();
-        this.conexao.close();
+    protected int addWithKey(String query, Object... parametros) throws SQLException {
+        try (
+            Connection conexao = new Conexao().getConexao();
+            PreparedStatement preparedStatement = conexao.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
+        ) {
+            if (parametros != null) for (int i = 0; i < parametros.length; i++) preparedStatement.setObject(i + 1, parametros[i]);
+            preparedStatement.executeUpdate();
+
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) return resultSet.getInt(1); 
+            }
+
+            throw new SQLException("A inserção falhou, nenhum ID foi retornado.");
+        }
     }
 
-    public ResultSet getQuery(String query, Object... parametros) throws SQLException {
-        this.abrir(query, parametros);
-        return preparedStatement.executeQuery();
-    }
-
-    public int setQuery(String query, Object... parametros) throws SQLException {
-        this.abrir(query, parametros);
-        this.fechar();
-        return preparedStatement.executeUpdate();
+    protected int addNoKey(String query, Object... parametros) throws SQLException {
+        try (
+            Connection conexao = new Conexao().getConexao();
+            PreparedStatement preparedStatement = conexao.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
+        ) {
+            if (parametros != null) for (int i = 0; i < parametros.length; i++) preparedStatement.setObject(i + 1, parametros[i]);
+            return preparedStatement.executeUpdate();
+        }
     }
 }

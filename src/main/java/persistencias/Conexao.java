@@ -1,19 +1,5 @@
 package persistencias;
 
-// import java.sql.Connection;
-// import java.sql.PreparedStatement;
-// import java.sql.ResultSet;
-
-// public class ConexaoPSQL {
-//     private Connection conexao;
-//     private PreparedStatement instrucaoSQL = conexao.prepareStatement(query);
-//     private ResultSet resultado = instrucaoSQL.executeQuery(); 
-
-//     public ConexaoPSQL() {
-
-//     }
-// }
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

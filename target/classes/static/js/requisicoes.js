@@ -18,3 +18,15 @@
 //     }
 // }
 
+import { Palestra } from "./palestra.js"
+
+document.addEventListener(
+    'DOMContentLoaded', () => {
+        document.getElementById('formulario').addEventListener(
+            'submit', (event) => {
+                const validacao = (new Palestra('formulario')).validar()
+                if (!(validacao.isValid)) event.preventDefault()
+            }
+        )
+    }
+)

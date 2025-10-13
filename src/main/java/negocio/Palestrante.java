@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Palestrante {
     private int id;
-    private String nome,biografia,cpf;
+    private String nome, biografia, cpf;
     List<Palestra> palestras;
 
     public Palestrante (
