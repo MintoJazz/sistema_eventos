@@ -57,7 +57,7 @@ public abstract class ADAO<T> implements IDAO<T> {
         }
     }
 
-    protected int addNoKey(String query, Object... parametros) throws SQLException {
+    public int addNoKey(String query, Object... parametros) throws SQLException {
         try (
             Connection conexao = new Conexao().getConexao();
             PreparedStatement preparedStatement = conexao.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);

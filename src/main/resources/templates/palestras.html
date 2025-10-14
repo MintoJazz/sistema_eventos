@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Palestras</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+</head>
+
+<body>
+    <main class="container">
+        <hgroup>
+            <h1>Dashboard de Palestras</h1>
+            <h2>Todas as palestras cadastradas no sistema</h2>
+        </hgroup>
+
+        <figure>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Nome da Palestra</th>
+                        <th scope="col">Data e Hora de Início</th>
+                        <th scope="col">Duração</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#palestras}}
+                    <tr>
+                        <td><a href="/palestra/{{id}}">{{nome}}</a></td>
+                        <td>{{inicioTimestamp}}</td>
+                        <td>{{duracao}} horas</td>
+                    </tr>
+                    {{/palestras}}
+                </tbody>
+            </table>
+        </figure>
+        
+        <a href="/palestra/nova" role="button">Adicionar Nova Palestra</a>
+
+    </main>
+</body>
+
+</html>

@@ -8,7 +8,7 @@
 </head>
 <body>
     <main class="container">
-        <h1 id="nome"">{{participante.nome}}</h1>
+        <h1 id="nome">{{participante.nome}}</h1>
 
         <article>
             <header><b>Informações</b></header>
@@ -18,11 +18,16 @@
         </article>
 
         <article>
-            <header><b>Inscrições</b></header>
+            <header><b>Minhas Inscrições</b></header>
+            <br>
+            <a href="/eventos/disponiveis/{{participante.cpf}}/" role="button" class="contrast">
+                Abrir Inscrições disponiveis
+            </a>
+            <br>
             <table>
                 <thead>
                     <tr>
-                        <th>Nome</th>
+                        <th>Nome do Evento</th>
                         <th>Local</th>
                         <th>Data de Início</th>
                         <th>Data de Fim</th>
@@ -33,8 +38,16 @@
                     <tr>
                         <td> {{nome}} </td>
                         <td> {{localidade}} </td>
-                        <td> {{dataInicio}} </td>
-                        <td> {{dataFim}} </td>
+                        <td> {{dataInicioFormatada}} </td>
+                        <td> {{dataFimFormatada}} </td>
+                    </tr>
+                    {{/participante.eventos}}
+                    
+                    {{^participante.eventos}}
+                    <tr>
+                        <td colspan="4" style="text-align: center;">
+                            <em>Você ainda não está inscrito em nenhum evento.</em>
+                        </td>
                     </tr>
                     {{/participante.eventos}}
                 </tbody>

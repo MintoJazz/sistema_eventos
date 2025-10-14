@@ -1,11 +1,8 @@
 package persistencias;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,7 +10,7 @@ import negocio.Palestra;
 import negocio.Palestrante;
 
 public class DAOPalestra extends ADAO<Palestra>{
-    private static final String queryInsertPalestra = "INSERT INTO palestra (nome, data_hora_inicio, duracao) VALUES (?, ?, ?);";
+    private static final String queryInsertPalestra = "INSERT INTO palestra (nome, data_hora_inicio, duracao, evento_id) VALUES (?, ?, ?, ?);";
     private static final String queryInsertPalestrante = "INSERT INTO palestra_palestrante (palestra_id, palestrante_id) VALUES (?, ?);";
 
     public DAOPalestra() {

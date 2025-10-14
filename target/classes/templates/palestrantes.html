@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Palestrantes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+</head>
+
+<body>
+    <main class="container">
+        <hgroup>
+            <h1>Dashboard de Palestrantes</h1>
+            <h2>Listados por número de palestras (ordem crescente)</h2>
+        </hgroup>
+
+        <figure>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Nome do Palestrante</th>
+                        <th scope="col">CPF</th>
+                        <th scope="col">Nº de Palestras</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#palestrantes}}
+                    <tr>
+                        <td><a href="/palestrante/{{cpf}}">{{nome}}</a></td>
+                        <td>{{cpf}}</td>
+                        <td><strong>{{nroPalestras}}</strong></td>
+                    </tr>
+                    {{/palestrantes}}
+                </tbody>
+            </table>
+        </figure>
+    </main>
+</body>
+
+</html>

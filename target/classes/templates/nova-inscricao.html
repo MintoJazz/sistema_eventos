@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Inscrição para {{participante.nome}}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+</head>
+
+<body>
+    <main class="container">
+        <hgroup>
+            <h1>Nova Inscrição</h1>
+            <h2>Inscrevendo: <strong>{{participante.nome}}</strong> (CPF: {{participante.cpf}})</h2>
+        </hgroup>
+
+        <form method="post" action="/inscricao">
+            <input type="hidden" name="participante_id" value="{{participante.id}}">
+            <fieldset>
+                <article>
+                    <header>
+                        <h3>Eventos Disponíveis</h3>
+                        <p>Selecione um ou mais eventos nos quais deseja se inscrever.</p>
+                    </header>
+                    
+                    {{#eventos}}
+                    <label>
+                        <input type="checkbox" name="eventos_ids" value="{{id}}">
+                        {{nome}} <br> <small>Início em: {{dataInicio}} (Status: {{status}})</small>
+                    </label>
+                    {{/eventos}}
+
+                    {{^eventos}}
+                        <p><em>Não há novos eventos disponíveis para inscrição no momento.</em></p>
+                    {{/eventos}}
+
+                </article>
+            </fieldset>
+            <button type="submit">Confirmar Inscrição</button>
+        </form>
+
+        <a href="/admin/participantes" role="button" class="secondary outline">Voltar</a>
+    </main>
+
+    <script type="module" src="/static/js/scriptNovaInscricao.js"></script>
+</body>
+
+</html>

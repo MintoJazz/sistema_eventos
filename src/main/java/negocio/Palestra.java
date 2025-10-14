@@ -2,6 +2,8 @@ package negocio;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.ArrayList;
+import persistencias.Formatadores;
 
 public class Palestra {
     private int id, duracao;
@@ -10,87 +12,73 @@ public class Palestra {
     private Evento evento;
     private List<Palestrante> palestrantes;
 
-    public Palestra(
-        String nome,
-        Timestamp inicioTimestamp,
-        int duracao,
-        Evento evento,
-        List<Palestrante> palestrantes
-    ) {
-        setNome(nome);
-        setDuracao(duracao);
-        setInicioTimestamp(inicioTimestamp);
-        setEvento(evento);
-        setPalestrantes(palestrantes);
+    public Palestra(int id, String nome, Timestamp inicioTimestamp, int duracao, Evento evento, List<Palestrante> palestrantes) {
+        this.id = id;
+        this.nome = nome;
+        this.inicioTimestamp = inicioTimestamp;
+        this.duracao = duracao;
+        this.evento = evento;
+        this.palestrantes = palestrantes;
+
+        if (this.palestrantes == null) {
+            this.palestrantes = new ArrayList<>();
+        }
     }
 
-    public Palestra(
-        int id,
-        String nome,
-        Timestamp inicioTimestamp,
-        int duracao
-    ) {
-        setId(id);
-        setNome(nome);
-        setDuracao(duracao);
-        setInicioTimestamp(inicioTimestamp);
+    public Palestra(String nome, Timestamp inicioTimestamp, int duracao, Evento evento, List<Palestrante> palestrantes) {
+        this(0, nome, inicioTimestamp, duracao, evento, palestrantes);
     }
 
-    public Palestra(
-        int id,
-        String nome,
-        Timestamp inicioTimestamp,
-        int duracao,
-        Evento evento
-    ) {
-        setId(id);
-        setNome(nome);
-        setDuracao(duracao);
-        setInicioTimestamp(inicioTimestamp);
-        setEvento(evento);
+    public Palestra(int id, String nome, Timestamp inicioTimestamp, int duracao) {
+        this(id, nome, inicioTimestamp, duracao, null, null);
     }
 
-    public Palestra(
-        int id,
-        String nome,
-        Timestamp inicioTimestamp,
-        int duracao,
-        Evento evento,
-        List<Palestrante> palestrantes
-    ) {
-        setId(id);
-        setNome(nome);
-        setDuracao(duracao);
-        setInicioTimestamp(inicioTimestamp);
-        setEvento(evento);
-        setPalestrantes(palestrantes);
+    public Palestra(int id, String nome, Timestamp inicioTimestamp, int duracao, Evento evento) {
+        this(id, nome, inicioTimestamp, duracao, evento, null);
     }
 
     public int getId() {
         return id;
-    } public int getDuracao() {
+    }
+    public int getDuracao() {
         return duracao;
-    } public Evento getEvento() {
+    }
+    public Evento getEvento() {
         return evento;
-    } public Timestamp getInicioTimestamp() {
+    }
+    public Timestamp getInicioTimestamp() {
         return inicioTimestamp;
-    } public String getNome() {
+    }
+    public String getNome() {
         return nome;
-    } public List<Palestrante> getPalestrantes() {
+    }
+    public List<Palestrante> getPalestrantes() {
         return palestrantes;
     }
 
     public void setDuracao(int duracao) {
         this.duracao = duracao;
-    } public void setEvento(Evento evento) {
+    }
+    public void setEvento(Evento evento) {
         this.evento = evento;
-    } public void setId(int id) {
+    }
+    public void setId(int id) {
         this.id = id;
-    } public void setInicioTimestamp(Timestamp inicioTimestamp) {
+    }
+    public void setInicioTimestamp(Timestamp inicioTimestamp) {
         this.inicioTimestamp = inicioTimestamp;
-    } public void setNome(String nome) {
+    }
+    public void setNome(String nome) {
         this.nome = nome;
-    } public void setPalestrantes(List<Palestrante> palestrantes) {
+    }
+    public void setPalestrantes(List<Palestrante> palestrantes) {
         this.palestrantes = palestrantes;
+    }
+
+    public String getInicioFormatado() {
+        if (this.inicioTimestamp == null) {
+            return "A definir";
+        }
+        return Formatadores.Timestamp2StringData(this.inicioTimestamp);
     }
 }
