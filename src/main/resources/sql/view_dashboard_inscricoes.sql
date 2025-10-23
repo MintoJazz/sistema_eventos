@@ -5,7 +5,6 @@ SELECT
     i.data_hora,
     i.pago,
     
-    -- Colunas do Evento (já com status da outra VIEW)
     e.id AS evento_id,
     e.nome AS evento_nome,
     e.data_inicio,
@@ -13,7 +12,6 @@ SELECT
     e.localidade,
     e.status_evento,
 
-    -- Colunas do Participante
     p.id AS participante_id,
     p.nome AS participante_nome,
     p.cpf,
@@ -21,7 +19,6 @@ SELECT
     p.data_nascimento
 FROM
     inscricao i
--- Junta com a VIEW de eventos para já pegar o status calculado
 JOIN
     dashboard_eventos e ON i.evento_id = e.id
 -- Junta com a tabela de participantes

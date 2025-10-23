@@ -192,7 +192,6 @@ public class Main {
                             continue;
                         }
 
-
                         daoInscricao.setQueryAdd(participante, evento);
                         System.out.println("Inscrição no evento '" + evento.getNome() + "' realizada com sucesso.");
                         sucessos.add("Inscrição no evento '" + evento.getNome() + "' realizada com sucesso.");
@@ -217,3 +216,4 @@ public class Main {
         );
     }
 }
+
