@@ -14,8 +14,13 @@ public abstract class AService <
 	DAO extends ADAO<Entidade>, 
 	Factory extends IFactory<Entidade, DashboardDTO, PerfilDTO, OpcaoDTO, CriacaoDTO>
 > {
-	DAO dao;
-	Factory factory;
+	protected final DAO dao;
+	protected final Factory factory;
+
+	public AService(DAO dao, Factory factory) {
+		this.dao = dao;
+		this.factory = factory;
+	}
 
 	public List<DashboardDTO> listar() throws SQLException {
 		List<Entidade> lista = null;
@@ -27,7 +32,9 @@ public abstract class AService <
 		return this.factory.getDashboard(lista);
 	}
 
-    protected abstract Map<String, String> validador(CriacaoDTO criacaoDTO);
+    public abstract Map<String, String> validador(CriacaoDTO criacaoDTO);
 
-	protected abstract void salvar(CriacaoDTO criacaoDTO);
+	public abstract void salvar(CriacaoDTO criacaoDTO);
+
+	public abstract PerfilDTO getPerfil(String chave, String coluna);
 }
