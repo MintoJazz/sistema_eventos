@@ -32,7 +32,9 @@ public abstract class AController <
 		ctx.render("/templates/dashboard-" + this.nomeTabela + ".html", model);
 	}
 
-	protected abstract Map<String,Object> elementosFormulario(Context ctx);
+	protected Map<String,Object> elementosFormulario(Context ctx) {
+		return new HashMap<>();
+	}
 
 	public void formulario(Context ctx) {
 		Map<String,Object> model = this.elementosFormulario(ctx);

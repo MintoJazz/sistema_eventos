@@ -6,20 +6,58 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import exceptions.ChaveNaoGeradaException;
 
 public abstract class ADAO<Entidade> {
-	String tabela, queryAdd;
-	List<String> colunasUnicas;
+	private static final ObjectMapper objectMapper = new ObjectMapper();
 
-	// ADD
+	protected String tabela;
+	protected String querySelectAll = "SELECT * FROM {tabela};";
+	protected String querySelectOne = "SELECT * FROM {tabela} WHERE {coluna} = ?;";
+	protected String queryInsert;
+	protected List<String> colunasUnicas;
 
+	public ADAO(String tabela, List<String> colunasUnicas) {
+		this.tabela = tabela;
+		this.colunasUnicas = colunasUnicas;
+		this.querySelectAll = this.querySelectAll.replace("{tabela}", tabela);
+		this.querySelectOne = this.querySelectOne.replace("{tabela}", tabela);
+	}
+
+	protected Map<String, Object> parseJsonStringToMap(String jsonString) {
+        if (jsonString == null || jsonString.isBlank() || jsonString.equals("{}")) return new HashMap<>();
+
+        try {
+            return objectMapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Falha ao parsear a string JSON: " + jsonString, e);
+        }
+    }
+	
+	protected String parseMapToJsonString(Map<String, Object> map) {
+        if (map == null) return null;
+
+        try {
+            return objectMapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Falha ao converter Map para String JSON", e);
+        }
+    }
+	
+	// CREATE
+	
 	protected abstract void mapAddQuery(PreparedStatement preparedStatement, Entidade entidade) throws SQLException;
 
 	protected PreparedStatement setPreparedStatement(Connection conexao, Entidade entidade) throws SQLException {
-		PreparedStatement preparedStatement = conexao.prepareStatement(this.queryAdd, Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement preparedStatement = conexao.prepareStatement(this.queryInsert, Statement.RETURN_GENERATED_KEYS);
 		mapAddQuery(preparedStatement, entidade); 
 		return preparedStatement;
 	}
@@ -41,20 +79,13 @@ public abstract class ADAO<Entidade> {
 
 	// READ ALL
 
-	public ADAO(String tabela, String queryAdd, List<String> colunasUnicas) {
-		this.tabela = tabela;
-		this.queryAdd = queryAdd;
-		this.colunasUnicas = colunasUnicas;
-	}
-
-	protected abstract Entidade mapEntidade(ResultSet resultSet);
+	protected abstract Entidade mapEntidade(ResultSet resultSet) throws SQLException;
 
 	public List<Entidade> getAll(Connection conexao) throws SQLException {
 		List<Entidade> lista = new ArrayList<>();
-		String query = "SELECT * FROM " + this.tabela + ";";
 		
 		try (
-			PreparedStatement preparedStatement = conexao.prepareStatement(query);
+			PreparedStatement preparedStatement = conexao.prepareStatement(this.querySelectAll);
 			ResultSet resultSet = preparedStatement.executeQuery();
 		) {
 			while(resultSet.next()) lista.add(this.mapEntidade(resultSet));
@@ -68,7 +99,7 @@ public abstract class ADAO<Entidade> {
 	protected PreparedStatement setPreparedStatement(Connection conexao, String coluna, Object valor) throws SQLException {
 		if (!colunasUnicas.contains(coluna)) throw new IllegalArgumentException("A coluna '" + coluna + "' não é uma coluna de busca válida ou segura.");
 
-		String query = "SELECT * FROM " + this.tabela + " WHERE " + coluna + " = ?;";
+		String query = this.querySelectOne.replace("{coluna}", coluna);
 		PreparedStatement preparedStatement = conexao.prepareStatement(query);
 		preparedStatement.setObject(1, valor);
 		return preparedStatement;

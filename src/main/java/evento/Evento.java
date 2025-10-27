@@ -1,73 +1,48 @@
 package evento;
 
 import java.sql.Date;
+import java.util.Map;
 
 public class Evento {
-    private int id;
-    private String nome, local, status;
-    private Date dataInicio, dataFim;
+    private final int id;
+    private final String nome, local;
+    private final Date dataInicio, dataFim;
+    private final Map<String,Object> detalhes, metadados;
+    private final byte[] material;
 
-    public Evento(
-        int id,
-        String nome, 
-        Date dataInicio, 
-        Date dataFim, 
-        String local, 
-        String status
-    ) {
-        setId(id);
-        setNome(nome);
-        setDataInicio(dataInicio);
-        setDataFim(dataFim);
-        setLocal(local);
-        setStatus(status);
+    public Evento(int id, String nome, String local, Date dataInicio, Date dataFim, Map<String,Object> detalhes, Map<String,Object> metadados, byte[] material) {
+        this.id = id;
+        this.nome = nome;
+        this.local = local;
+        this.dataInicio = dataInicio;
+        this.dataFim = dataFim;
+        this.detalhes = detalhes;
+        this.metadados = metadados;
+        this.material = material;
     }
 
     public int getId() {
         return id;
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getNome() {
         return nome;
     }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getLocal() {
         return local;
     }
-
-    public void setLocal(String local) {
-        this.local = local;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public Date getDataInicio() {
         return dataInicio;
     }
-
-    public void setDataInicio(Date dataInicio) {
-        this.dataInicio = dataInicio;
-    }
-
     public Date getDataFim() {
         return dataFim;
     }
-
-    public void setDataFim(Date dataFim) {
-        this.dataFim = dataFim;
+    public Map<String,Object> getDetalhes() {
+        return detalhes;
+    }
+    public Map<String,Object> getMetadados() {
+        return metadados;
+    }
+    public byte[] getMaterial() {
+        return material;
     }
 }

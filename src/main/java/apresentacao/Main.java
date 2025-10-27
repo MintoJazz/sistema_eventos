@@ -27,10 +27,14 @@ public class Main {
         ).start(7070);
 
         app.get("/", ctx -> ctx.result("Trabalho IOBD - Sistema de Eventos by Jaaziel Machado"));
-        
+
         app.get("/admin/{tabela}", ctx -> verificar(ctx.pathParam("tabela")).dashboard(ctx));
         
+        app.get("/{tabela}/{coluna}/{valor}", ctx -> verificar(ctx.pathParam("tabela")).perfil(ctx, ctx.pathParam("coluna")));
+        
         app.get("/{tabela}/nova", ctx -> verificar(ctx.pathParam("tabela")).formulario(ctx));
+
+        app.get("eventos/disponiveis/{cpf}", ctx -> ctx.redirect("/inscricao/nova"));
         
         app.post("/{tabela}", ctx -> verificar(ctx.pathParam("tabela")).criacao(ctx));
         

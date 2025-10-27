@@ -1,8 +1,8 @@
 package evento.dto;
 
 public class EventoOpcaoDTO {
-    private int id;
-    private String nome;
+    private final int id;
+    private final String nome;
 
     public EventoOpcaoDTO(int id, String nome) {
         this.id = id;
@@ -12,13 +12,7 @@ public class EventoOpcaoDTO {
     public int getId() {
         return id;
     }
-    public void setId(int id) {
-        this.id = id;
-    }
     public String getNome() {
         return nome;
-    }
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 }
