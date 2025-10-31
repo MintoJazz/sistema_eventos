@@ -16,13 +16,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import exceptions.ChaveNaoGeradaException;
 
-public abstract class ADAO<Entidade> {
+public abstract class ADAO<Entidade extends IGetId> {
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
 	protected String tabela;
 	protected String querySelectAll = "SELECT * FROM {tabela};";
-	protected String querySelectOne = "SELECT * FROM {tabela} WHERE {coluna} = ?;";
-	protected String queryInsert;
+	protected String querySelectOne = "SELECT * FROM {tabela} WHERE id = ?;";
+	protected String queryDelete = "DELETE FROM {tabela} WHERE id = ?;";
+	protected String queryInsert, queryUpdate;
 	protected List<String> colunasUnicas;
 
 	public ADAO(String tabela, List<String> colunasUnicas) {
@@ -30,6 +31,7 @@ public abstract class ADAO<Entidade> {
 		this.colunasUnicas = colunasUnicas;
 		this.querySelectAll = this.querySelectAll.replace("{tabela}", tabela);
 		this.querySelectOne = this.querySelectOne.replace("{tabela}", tabela);
+		this.queryDelete = this.querySelectOne.replace("{tabela}", tabela);
 	}
 
 	protected Map<String, Object> parseJsonStringToMap(String jsonString) {
@@ -54,11 +56,11 @@ public abstract class ADAO<Entidade> {
 	
 	// CREATE
 	
-	protected abstract void mapAddQuery(PreparedStatement preparedStatement, Entidade entidade) throws SQLException;
+	protected abstract void mapAdd(PreparedStatement preparedStatement, Entidade entidade) throws SQLException;
 
 	protected PreparedStatement setPreparedStatement(Connection conexao, Entidade entidade) throws SQLException {
 		PreparedStatement preparedStatement = conexao.prepareStatement(this.queryInsert, Statement.RETURN_GENERATED_KEYS);
-		mapAddQuery(preparedStatement, entidade); 
+		mapAdd(preparedStatement, entidade); 
 		return preparedStatement;
 	}
 
@@ -113,5 +115,29 @@ public abstract class ADAO<Entidade> {
 			if(resultSet.next()) return this.mapEntidade(resultSet);
 			return null;
 		}
+	}
+
+	// UPDATE
+
+	public int atualizar(Connection conexao, Entidade entidade) throws SQLException {
+		try (PreparedStatement preparedStatement = conexao.prepareStatement(this.queryUpdate)) {
+			this.mapUpdate(preparedStatement, entidade);
+			return preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+        	throw new RuntimeException("Erro de banco de dados ao atualizar entidade: " + e.getMessage(), e);
+    	}
+	}
+
+	protected abstract void mapUpdate(PreparedStatement preparedStatement, Entidade entidade) throws SQLException;
+
+	// DELETE
+
+	public int apagar(Connection conexao, Entidade entidade) {
+		try (PreparedStatement preparedStatement = conexao.prepareStatement(this.queryDelete)) {
+			preparedStatement.setInt(1, entidade.getId());
+			return preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+        	throw new RuntimeException("Erro de banco de dados ao apagar entidade: " + e.getMessage(), e);
+    	}
 	}
 }

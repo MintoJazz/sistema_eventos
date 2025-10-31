@@ -1,0 +1,621 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict UsnyjQF54YwAdFNcXeySzQZGdxFaXF81muwL6hBPP2SDmJyRJfH5tLZ66MoB1yn
+
+-- Dumped from database version 18.0 (Ubuntu 18.0-1.pgdg22.04+3)
+-- Dumped by pg_dump version 18.0 (Ubuntu 18.0-1.pgdg22.04+3)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: evento; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.evento (
+    id integer NOT NULL,
+    nome character varying(200),
+    data_inicio date DEFAULT CURRENT_DATE,
+    data_fim date DEFAULT CURRENT_DATE,
+    localidade text
+);
+
+
+ALTER TABLE public.evento OWNER TO postgres;
+
+--
+-- Name: dashboard_eventos; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.dashboard_eventos AS
+ SELECT id,
+    nome,
+    data_inicio,
+    data_fim,
+    localidade,
+        CASE
+            WHEN (data_inicio > CURRENT_DATE) THEN 'Futuro'::text
+            WHEN (data_fim >= CURRENT_DATE) THEN 'Em Andamento'::text
+            ELSE 'Encerrado'::text
+        END AS status_evento
+   FROM public.evento;
+
+
+ALTER VIEW public.dashboard_eventos OWNER TO postgres;
+
+--
+-- Name: inscricao; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.inscricao (
+    id integer NOT NULL,
+    evento_id integer,
+    participante_id integer,
+    data_hora timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    valor numeric DEFAULT 0,
+    pago boolean DEFAULT false,
+    CONSTRAINT inscricao_valor_check CHECK (((valor)::numeric(8,2) >= (0)::numeric))
+);
+
+
+ALTER TABLE public.inscricao OWNER TO postgres;
+
+--
+-- Name: participante; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.participante (
+    id integer NOT NULL,
+    nome character varying(200),
+    data_nascimento date,
+    cpf character varying(11) NOT NULL,
+    email text
+);
+
+
+ALTER TABLE public.participante OWNER TO postgres;
+
+--
+-- Name: dashboard_inscricoes; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.dashboard_inscricoes AS
+ SELECT i.id AS inscricao_id,
+    i.valor,
+    i.data_hora,
+    i.pago,
+    e.id AS evento_id,
+    e.nome AS evento_nome,
+    e.data_inicio,
+    e.data_fim,
+    e.localidade,
+    e.status_evento,
+    p.id AS participante_id,
+    p.nome AS participante_nome,
+    p.cpf,
+    p.email,
+    p.data_nascimento
+   FROM ((public.inscricao i
+     JOIN public.dashboard_eventos e ON ((i.evento_id = e.id)))
+     JOIN public.participante p ON ((i.participante_id = p.id)))
+  ORDER BY i.data_hora DESC;
+
+
+ALTER VIEW public.dashboard_inscricoes OWNER TO postgres;
+
+--
+-- Name: palestra_palestrante; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.palestra_palestrante (
+    palestra_id integer NOT NULL,
+    palestrante_id integer NOT NULL
+);
+
+
+ALTER TABLE public.palestra_palestrante OWNER TO postgres;
+
+--
+-- Name: palestrante; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.palestrante (
+    id integer NOT NULL,
+    nome character varying(200),
+    biografia text,
+    cpf character(11) NOT NULL
+);
+
+
+ALTER TABLE public.palestrante OWNER TO postgres;
+
+--
+-- Name: dashboard_palestrantes; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.dashboard_palestrantes AS
+ SELECT p.id,
+    p.nome,
+    p.biografia,
+    p.cpf,
+    COALESCE(i.qtd_palestras, (0)::bigint) AS nro_palestras
+   FROM (public.palestrante p
+     LEFT JOIN ( SELECT pp.palestrante_id,
+            count(pp.palestra_id) AS qtd_palestras
+           FROM public.palestra_palestrante pp
+          GROUP BY pp.palestrante_id) i ON ((i.palestrante_id = p.id)))
+  ORDER BY COALESCE(i.qtd_palestras, (0)::bigint) DESC NULLS LAST;
+
+
+ALTER VIEW public.dashboard_palestrantes OWNER TO postgres;
+
+--
+-- Name: evento_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.evento_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.evento_id_seq OWNER TO postgres;
+
+--
+-- Name: evento_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.evento_id_seq OWNED BY public.evento.id;
+
+
+--
+-- Name: inscricao_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.inscricao_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.inscricao_id_seq OWNER TO postgres;
+
+--
+-- Name: inscricao_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.inscricao_id_seq OWNED BY public.inscricao.id;
+
+
+--
+-- Name: palestra; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.palestra (
+    id integer NOT NULL,
+    nome character varying(200) NOT NULL,
+    duracao integer,
+    data_hora_inicio timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    evento_id integer,
+    CONSTRAINT palestra_duracao_check CHECK ((duracao >= 0))
+);
+
+
+ALTER TABLE public.palestra OWNER TO postgres;
+
+--
+-- Name: palestra_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.palestra_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.palestra_id_seq OWNER TO postgres;
+
+--
+-- Name: palestra_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.palestra_id_seq OWNED BY public.palestra.id;
+
+
+--
+-- Name: palestrante_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.palestrante_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.palestrante_id_seq OWNER TO postgres;
+
+--
+-- Name: palestrante_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.palestrante_id_seq OWNED BY public.palestrante.id;
+
+
+--
+-- Name: participante_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.participante_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.participante_id_seq OWNER TO postgres;
+
+--
+-- Name: participante_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.participante_id_seq OWNED BY public.participante.id;
+
+
+--
+-- Name: evento id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.evento ALTER COLUMN id SET DEFAULT nextval('public.evento_id_seq'::regclass);
+
+
+--
+-- Name: inscricao id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.inscricao ALTER COLUMN id SET DEFAULT nextval('public.inscricao_id_seq'::regclass);
+
+
+--
+-- Name: palestra id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.palestra ALTER COLUMN id SET DEFAULT nextval('public.palestra_id_seq'::regclass);
+
+
+--
+-- Name: palestrante id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.palestrante ALTER COLUMN id SET DEFAULT nextval('public.palestrante_id_seq'::regclass);
+
+
+--
+-- Name: participante id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.participante ALTER COLUMN id SET DEFAULT nextval('public.participante_id_seq'::regclass);
+
+
+--
+-- Data for Name: evento; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.evento (id, nome, data_inicio, data_fim, localidade) FROM stdin;
+1	Tech Conference 2025	2025-10-20	2025-10-22	São Paulo
+2	Data Science Summit	2025-10-20	2025-10-22	Remoto
+3	Workshop de Inovação	2025-08-15	2025-08-16	Rio de Janeiro
+4	Festival de Cultura Geek	2025-11-05	2025-11-10	Belo Horizonte
+5	Encontro de Desenvolvedores	2025-01-10	2025-01-12	Curitiba
+6	Semana da Inteligência Artificial	2025-12-01	2025-12-05	São Paulo
+7	Evento Sem Palestras	2026-02-01	2026-02-02	Porto Alegre
+8	Cybersecurity Nexus 2025	2025-11-25	2025-11-27	Salvador
+9	Encontro UX/UI Design	2025-09-10	2025-09-11	Remoto
+10	Fórum de Blockchain	2026-03-15	2026-03-17	Recife
+11	Evento Vazio 2026	2026-05-20	2026-05-21	Florianópolis
+\.
+
+
+--
+-- Data for Name: inscricao; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.inscricao (id, evento_id, participante_id, data_hora, valor, pago) FROM stdin;
+1	1	1	2025-10-21 19:20:15.314215	150.00	t
+2	2	1	2025-10-21 19:20:15.314215	200.00	t
+3	3	1	2025-10-21 19:20:15.314215	100.00	t
+4	4	1	2025-10-21 19:20:15.314215	50.00	t
+5	9	1	2025-10-21 19:20:15.314215	80.00	t
+6	1	2	2025-10-21 19:20:15.314215	150.00	t
+7	8	2	2025-10-21 19:20:15.314215	250.00	t
+8	6	2	2025-10-21 19:20:15.314215	350.00	f
+9	2	3	2025-10-21 19:20:15.314215	200.00	t
+10	3	3	2025-10-21 19:20:15.314215	100.00	f
+11	1	3	2025-10-21 19:20:15.314215	150.00	t
+12	10	3	2025-10-21 19:20:15.314215	300.00	t
+13	2	5	2025-10-21 19:20:15.314215	200.00	t
+14	4	5	2025-10-21 19:20:15.314215	50.00	t
+15	4	6	2025-10-21 19:20:15.314215	50.00	t
+16	9	6	2025-10-21 19:20:15.314215	80.00	f
+17	6	7	2025-10-21 19:20:15.314215	350.00	t
+18	8	7	2025-10-21 19:20:15.314215	250.00	t
+19	8	8	2025-10-21 19:20:15.314215	250.00	t
+20	10	8	2025-10-21 19:20:15.314215	300.00	t
+21	1	8	2025-10-21 19:20:15.314215	150.00	t
+22	9	9	2025-10-21 19:20:15.314215	80.00	t
+23	2	9	2025-10-21 19:20:15.314215	200.00	t
+24	1	10	2025-10-21 19:20:15.314215	150.00	f
+25	5	10	2025-10-21 19:20:15.314215	120.00	t
+\.
+
+
+--
+-- Data for Name: palestra; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.palestra (id, nome, duracao, data_hora_inicio, evento_id) FROM stdin;
+1	O Futuro da Tecnologia Quântica	90	2025-10-20 10:00:00	1
+2	Big Data e Analytics na Prática	120	2025-10-20 14:00:00	1
+3	Inovação em Modelos de Negócio	60	2025-08-15 09:00:00	3
+4	Introdução ao SQL para Dados	180	2025-10-20 00:00:00	2
+5	Desenvolvimento de APIs com Javalin	90	2025-10-20 00:00:00	2
+6	Segurança em Aplicações Web	75	2025-10-21 11:00:00	1
+7	Carreira em TI: Além do Código	45	2025-11-06 16:00:00	4
+8	Defesa Cibernética Ativa	90	2025-11-25 10:00:00	8
+9	Princípios de Design Centrado no Usuário	75	2025-09-10 09:30:00	9
+10	O Futuro das Criptomoedas	120	2026-03-15 14:00:00	10
+11	Workshop de Figma para Iniciantes	180	2025-09-11 13:00:00	9
+12	Tópicos Avançados em Blockchain	90	2026-03-16 11:00:00	10
+13	sem nome	100	2025-11-24 20:00:00	11
+\.
+
+
+--
+-- Data for Name: palestra_palestrante; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.palestra_palestrante (palestra_id, palestrante_id) FROM stdin;
+1	1
+2	1
+3	2
+4	3
+5	3
+11	3
+2	4
+4	4
+6	4
+1	4
+5	4
+6	6
+8	6
+9	7
+11	7
+3	1
+10	4
+13	4
+13	3
+\.
+
+
+--
+-- Data for Name: palestrante; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.palestrante (id, nome, biografia, cpf) FROM stdin;
+1	Dra. Evelyn Rodrigues	Especialista em Inteligência Artificial e Machine Learning.	12345678901
+2	Prof. Marcos Andrade	Autor de best-sellers sobre desenvolvimento ágil.	23456789012
+3	Carlos Silva	Desenvolvedor Sênior e entusiasta de DevOps.	11122233344
+4	Beatriz Souza	PhD em Ciência de Dados com foco em visualização.	45678901234
+5	Ricardo Rocha	Consultor de segurança da informação.	56789012345
+6	Dra. Sofia Mendes	Especialista em segurança cibernética e privacidade de dados.	67890123456
+7	Paulo Costa	Designer de produto com mais de 10 anos de experiência em UX/UI.	78901234567
+\.
+
+
+--
+-- Data for Name: participante; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.participante (id, nome, data_nascimento, cpf, email) FROM stdin;
+1	Carlos Silva	1990-05-15	11122233344	carlos.silva@email.com
+2	Ana Pereira	1992-09-20	22233344455	ana.pereira@email.com
+3	Bruno Costa	1988-03-10	33344455566	bruno.costa@email.com
+4	Mariana Lima	1995-11-30	44455566677	mariana.lima@email.com
+5	Lucas Almeida	2000-01-25	55566677788	lucas.almeida@email.com
+6	Juliana Santos	1998-07-07	66677788899	juliana.santos@email.com
+7	Fernando Oliveira	1985-12-12	77788899900	fernando.o@email.com
+8	Rafael Martins	1993-02-18	88899900011	rafael.martins@email.com
+9	Larissa Ferreira	1999-06-22	99900011122	larissa.f@email.com
+10	Thiago Gomes	1987-10-05	00011122233	thiago.gomes@email.com
+\.
+
+
+--
+-- Name: evento_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.evento_id_seq', 11, true);
+
+
+--
+-- Name: inscricao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.inscricao_id_seq', 25, true);
+
+
+--
+-- Name: palestra_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.palestra_id_seq', 13, true);
+
+
+--
+-- Name: palestrante_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.palestrante_id_seq', 7, true);
+
+
+--
+-- Name: participante_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.participante_id_seq', 10, true);
+
+
+--
+-- Name: evento evento_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.evento
+    ADD CONSTRAINT evento_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: inscricao inscricao_evento_id_participante_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.inscricao
+    ADD CONSTRAINT inscricao_evento_id_participante_id_key UNIQUE (evento_id, participante_id);
+
+
+--
+-- Name: inscricao inscricao_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.inscricao
+    ADD CONSTRAINT inscricao_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: palestra_palestrante palestra_palestrante_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.palestra_palestrante
+    ADD CONSTRAINT palestra_palestrante_pkey PRIMARY KEY (palestra_id, palestrante_id);
+
+
+--
+-- Name: palestra palestra_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.palestra
+    ADD CONSTRAINT palestra_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: palestrante palestrante_cpf_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.palestrante
+    ADD CONSTRAINT palestrante_cpf_key UNIQUE (cpf);
+
+
+--
+-- Name: palestrante palestrante_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.palestrante
+    ADD CONSTRAINT palestrante_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: participante participante_cpf_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.participante
+    ADD CONSTRAINT participante_cpf_key UNIQUE (cpf);
+
+
+--
+-- Name: participante participante_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.participante
+    ADD CONSTRAINT participante_email_key UNIQUE (email);
+
+
+--
+-- Name: participante participante_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.participante
+    ADD CONSTRAINT participante_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: inscricao inscricao_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.inscricao
+    ADD CONSTRAINT inscricao_evento_id_fkey FOREIGN KEY (evento_id) REFERENCES public.evento(id) ON DELETE CASCADE;
+
+
+--
+-- Name: inscricao inscricao_participante_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.inscricao
+    ADD CONSTRAINT inscricao_participante_id_fkey FOREIGN KEY (participante_id) REFERENCES public.participante(id) ON DELETE CASCADE;
+
+
+--
+-- Name: palestra palestra_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.palestra
+    ADD CONSTRAINT palestra_evento_id_fkey FOREIGN KEY (evento_id) REFERENCES public.evento(id) ON DELETE CASCADE;
+
+
+--
+-- Name: palestra_palestrante palestra_palestrante_palestra_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.palestra_palestrante
+    ADD CONSTRAINT palestra_palestrante_palestra_id_fkey FOREIGN KEY (palestra_id) REFERENCES public.palestra(id) ON DELETE CASCADE;
+
+
+--
+-- Name: palestra_palestrante palestra_palestrante_palestrante_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.palestra_palestrante
+    ADD CONSTRAINT palestra_palestrante_palestrante_id_fkey FOREIGN KEY (palestrante_id) REFERENCES public.palestrante(id) ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict UsnyjQF54YwAdFNcXeySzQZGdxFaXF81muwL6hBPP2SDmJyRJfH5tLZ66MoB1yn
+

@@ -10,28 +10,24 @@ import persistencias.IFactory;
 
 public class ParticipanteFactory implements IFactory<Participante, ParticipanteDashboardDTO, ParticipantePerfilDTO, ParticipanteOpcaoDTO, ParticipanteCriacaoDTO> {
 
-    @Override
-    public List<ParticipanteDashboardDTO> getDashboard(List<Participante> entidades) {
+    @Override public List<ParticipanteDashboardDTO> getDashboard(List<Participante> entidades) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getDashboard'");
     }
 
-    @Override
-    public List<ParticipanteOpcaoDTO> getOpcao(List<Participante> entidades) {
+    @Override public List<ParticipanteOpcaoDTO> getOpcao(List<Participante> entidades) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getOpcao'");
     }
 
-    @Override
-    public ParticipantePerfilDTO getPerfil(Participante entidade) {
+    @Override public ParticipantePerfilDTO getPerfil(Participante entidade) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getPerfil'");
     }
 
-    @Override
-    public Participante toEntidade(ParticipanteCriacaoDTO criacaoDTO) {
+    @Override public Participante toEntidade(ParticipanteCriacaoDTO criacaoDTO) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'toEntidade'");
     }
-
+    
 }

@@ -8,14 +8,14 @@ import java.util.Map;
 import io.javalin.http.Context;
 
 public abstract class AController <
-	Entidade,
 	DashboardDTO,
-	OpcaoDTO,
 	PerfilDTO,
 	CriacaoDTO,
+	OpcaoDTO,
+	Entidade extends IGetId,
 	DAO extends ADAO<Entidade>,
 	Factory extends IFactory<Entidade, DashboardDTO, PerfilDTO, OpcaoDTO, CriacaoDTO>,
-	Service extends AService<DashboardDTO, PerfilDTO, OpcaoDTO, CriacaoDTO, Entidade, DAO, Factory>
+	Service extends AService<DashboardDTO, PerfilDTO, CriacaoDTO, OpcaoDTO, Entidade, DAO, Factory>
 > {
 	protected final String nomeTabela;
 	protected final Service service;
@@ -32,12 +32,8 @@ public abstract class AController <
 		ctx.render("/templates/dashboard-" + this.nomeTabela + ".html", model);
 	}
 
-	protected Map<String,Object> elementosFormulario(Context ctx) {
-		return new HashMap<>();
-	}
-
-	public void formulario(Context ctx) {
-		Map<String,Object> model = this.elementosFormulario(ctx);
+	public void formulario(Context ctx) throws SQLException {
+		Map<String,Object> model = this.service.elementosFormulario();
 		Map<String,String> erros = ctx.sessionAttribute("erros");
 		Map<String,String> input = ctx.sessionAttribute("inputs");
 
@@ -49,7 +45,7 @@ public abstract class AController <
 
 	protected abstract CriacaoDTO getCriacaoDTO(Context ctx);
 
-	public void criacao(Context ctx) {
+	public void criacao(Context ctx) throws SQLException {
 		CriacaoDTO criacaoDTO = this.getCriacaoDTO(ctx);
 		Map<String, String> erros = this.service.validador(criacaoDTO);
 
@@ -60,10 +56,11 @@ public abstract class AController <
 		else {
 			ctx.sessionAttribute("erros", erros);
 			ctx.sessionAttribute("input", criacaoDTO);
+			ctx.redirect("/evento/nova");
 		}
 	}
 
-	public void perfil(Context ctx, String coluna) {
+	public void perfil(Context ctx, String coluna) throws SQLException {
 		Map<String,Object> model = new HashMap<>();
 		PerfilDTO perfil = this.service.getPerfil(ctx.pathParam(coluna), coluna);
 

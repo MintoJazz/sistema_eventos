@@ -2,15 +2,16 @@ package persistencias;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class AService <
-	DashboardDTO, 
-	PerfilDTO, 
-	OpcaoDTO,
+	DashboardDTO,
+	PerfilDTO,
 	CriacaoDTO,
-	Entidade, 
+	OpcaoDTO,
+	Entidade extends IGetId, 
 	DAO extends ADAO<Entidade>, 
 	Factory extends IFactory<Entidade, DashboardDTO, PerfilDTO, OpcaoDTO, CriacaoDTO>
 > {
@@ -23,18 +24,30 @@ public abstract class AService <
 	}
 
 	public List<DashboardDTO> listar() throws SQLException {
-		List<Entidade> lista = null;
-
 		try (Connection conexao = new Conexao().getConexao()) {
-			lista = this.dao.getAll(conexao);
+			return this.listar(conexao);
 		}
-
-		return this.factory.getDashboard(lista);
 	}
 
-    public abstract Map<String, String> validador(CriacaoDTO criacaoDTO);
+	public List<DashboardDTO> listar(Connection conexao) throws SQLException {
+		return this.factory.getDashboard(this.dao.getAll(conexao));
+	}
 
-	public abstract void salvar(CriacaoDTO criacaoDTO);
+    public abstract Map<String, String> validador(CriacaoDTO criacaoDTO) throws SQLException;
 
-	public abstract PerfilDTO getPerfil(String chave, String coluna);
+	public abstract void salvar(CriacaoDTO criacaoDTO) throws SQLException;
+
+	public abstract PerfilDTO getPerfil(String chave, String coluna) throws SQLException;
+
+    public Map<String,Object> elementosFormulario() throws SQLException {
+		return new HashMap<>();
+	}
+
+	public List<OpcaoDTO> getOpcoes(Connection conexao) throws SQLException {
+		return factory.getOpcao(dao.getAll(conexao));
+	}
+
+	public boolean existe(int id, Connection conexao) throws SQLException {
+		return this.dao.getOne(conexao, "id", id) != null;
+	}
 }

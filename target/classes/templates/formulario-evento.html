@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Novo Evento</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <style>
+        /* Estilo simples para mensagens de erro */
+        .error-message {
+            color: var(--pico-color-invalid);
+            font-size: var(--pico-font-size-small);
+            margin-top: calc(var(--pico-form-element-spacing-vertical) / 4);
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <article>
+            <h1 class="text-center">Cadastrar Novo Evento</h1>
+
+            <form method="POST" action="/evento" enctype="multipart/form-data">
+
+                <label for="nome">
+                    Nome do Evento
+                    <input type="text" id="nome" name="nome" {{! <-- name="nome" mapeia para dto.setNome -->}}
+                    placeholder="Ex: Tech Conference 2026"
+                    value="{{#input}}{{nome}}{{/input}}" {{! <-- Repopula o valor -->}}
+                        aria-invalid="{{#erros.nome}}true{{/erros.nome}}" {{! <-- Indica erro para Pico.css -->}}
+                            />
+                            {{#erros.nome}} {{! <-- Mostra o erro se existir -->}}
+                                <small class="error-message">{{.}}</small>
+                                {{/erros.nome}}
+                </label>
+
+                <div class="grid">
+                    <label for="dataInicio">
+                        Data de Início
+                        <input type="date" id="dataInicio" name="dataInicio" {{! <-- name="dataInicio" -->}}
+                        value="{{#input}}{{dataInicio}}{{/input}}"
+                        aria-invalid="{{#erros.dataInicio}}true{{/erros.dataInicio}}"
+                        />
+                        {{#erros.dataInicio}}
+                        <small class="error-message">{{.}}</small>
+                        {{/erros.dataInicio}}
+                    </label>
+
+                    <label for="dataFim">
+                        Data de Fim
+                        <input type="date" id="dataFim" name="dataFim" {{! <-- name="dataFim" -->}}
+                        value="{{#input}}{{dataFim}}{{/input}}"
+                        aria-invalid="{{#erros.dataFim}}true{{/erros.dataFim}}"
+                        />
+                        {{#erros.dataFim}}
+                        <small class="error-message">{{.}}</small>
+                        {{/erros.dataFim}}
+                    </label>
+                </div>
+
+                <label for="local">
+                    Local
+                    <input type="text" id="local" name="local" {{! <-- name="local" -->}}
+                    placeholder="Ex: Centro de Convenções"
+                    value="{{#input}}{{local}}{{/input}}"
+                    aria-invalid="{{#erros.local}}true{{/erros.local}}"
+                    />
+                    {{#erros.local}}
+                    <small class="error-message">{{.}}</small>
+                    {{/erros.local}}
+                </label>
+
+                <label for="material">
+                    Material Anexado (Opcional)
+                    <input type="file" id="material" name="material" {{! <-- name="material" -->}}
+                    aria-invalid="{{#erros.material}}true{{/erros.material}}"
+                    />
+                    {{! Input file não pode ser repopulado por segurança -->}}
+                    {{#erros.material}}
+                    <small class="error-message">{{.}}</small>
+                    {{/erros.material}}
+                </label>
+
+                <button type="submit">Salvar Evento</button>
+
+            </form>
+        </article>
+    </main>
+</body>
+
+</html>

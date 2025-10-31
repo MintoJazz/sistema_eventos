@@ -1,17 +1,15 @@
 package persistencias;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Formatadores {
-    public static String data2String(Date data) {
-        SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");
-        return formatador.format(data);
+    public static String data2String(LocalDate data) {
+        return data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    public static String Timestamp2StringData(Timestamp timestamp) {
-        SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");
-        return formatador.format(timestamp);
-    }
+    // public static String Timestamp2StringData(Timestamp timestamp) {
+    //     SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");
+    //     return formatador.format(timestamp);
+    // }
 }

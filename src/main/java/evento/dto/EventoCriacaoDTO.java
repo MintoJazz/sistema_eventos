@@ -4,16 +4,8 @@ public class EventoCriacaoDTO {
     private String nome, dataFim, dataInicio, local, metadados, detalhes;
     private byte[] material;
 
-    // public EventoCriacaoDTO(String nome, String dataFim, String dataInicio, String local, String metadados, String detalhes, byte[] material) {
-    //     this.nome = nome;
-    //     this.dataFim = dataFim;
-    //     this.dataInicio = dataInicio;
-    //     this.local = local;
-    //     this.metadados = metadados;
-    //     this.detalhes = detalhes;
-    //     this.material = material;
-    // }
-
+    public EventoCriacaoDTO() {
+    }
     public String getNome() {
         return nome;
     }
