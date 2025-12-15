@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Palestra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap'); body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-zinc-950 text-zinc-300 flex justify-center items-center min-h-screen py-10">
+    <div class="w-full max-w-2xl">
+        <div class="flex items-center justify-between mb-8 border-b border-zinc-800 pb-4">
+            <div>
+                <h2 class="text-xl font-semibold text-white">Editar Palestra</h2>
+                <p class="text-sm text-zinc-500 mt-1">Alterar informações da atividade.</p>
+            </div>
+            <a href="javascript:history.back()" class="text-sm text-zinc-400 hover:text-white transition-colors">Cancelar</a>
+        </div>
+        <form id="formulario" action="/update/palestra/{{entidade.id}}" data-method="PUT" class="space-y-6">
+            <input type="hidden" name="id" value="{{entidade.id}}">
+            <input type="hidden" name="eventoId" value="{{entidade.eventoId}}">
+            <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">Título da Palestra</label>
+                <input type="text" name="nome" value="{{entidade.nome}}" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <label class="text-xs font-medium text-zinc-400 uppercase">Início (Data e Hora)</label>
+                    <input type="datetime-local" name="dataHoraInicio" value="{{entidade.dataHoraInicio}}" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300">
+                </div>
+                <div class="grid gap-2">
+                    <label class="text-xs font-medium text-zinc-400 uppercase">Duração (min)</label>
+                    <input type="number" name="duracao" value="{{entidade.duracao}}" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white">
+                </div>
+            </div>
+            <div class="p-4 bg-yellow-900/10 border border-yellow-900/30 rounded text-xs text-yellow-500">
+                ⚠️ Para alterar os palestrantes, exclua esta palestra e crie uma nova.
+            </div>
+            <div class="flex justify-end pt-4 border-t border-zinc-800">
+                <button type="submit" class="px-6 py-2 bg-white text-black text-sm font-bold rounded-md hover:bg-zinc-200 transition-colors">
+                    Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+    <script type="module" src="/js/submit.js"></script>
+</body>
+</html>

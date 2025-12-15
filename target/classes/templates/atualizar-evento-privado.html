@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Evento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap'); body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-zinc-950 text-zinc-300 flex justify-center items-center min-h-screen py-10">
+    <div class="w-full max-w-2xl">
+        <div class="flex items-center justify-between mb-8 border-b border-zinc-800 pb-4">
+            <div><h2 class="text-xl font-semibold text-white">Editar Evento</h2></div>
+            <a href="javascript:history.back()" class="text-sm text-zinc-400 hover:text-white">Cancelar</a>
+        </div>
+        
+        <form id="formulario" action="/update/evento/{{entidade.id}}" data-method="PUT" class="space-y-6">
+            <input type="hidden" name="id" value="{{entidade.id}}">
+            
+            <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">Nome do Evento</label>
+                <input type="text" name="nome" value="{{entidade.nome}}" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <label class="text-xs font-medium text-zinc-400 uppercase">Data Início</label>
+                    <input type="date" name="dataInicio" value="{{entidade.dataInicio}}" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
+                <div class="grid gap-2">
+                    <label class="text-xs font-medium text-zinc-400 uppercase">Data Fim</label>
+                    <input type="date" name="dataFim" value="{{entidade.dataFim}}" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
+            </div>
+            
+            <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">Localidade</label>
+                <input type="text" name="localidade" value="{{entidade.localidade}}" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+            </div>
+             
+            <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">Organizador</label>
+                <select id="selOrganizador" name="organizadorId" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                    {{#organizadores}}
+                    <option value="{{id}}">{{nome}}</option>
+                    {{/organizadores}}
+                </select>
+            </div>
+            
+            <div class="flex justify-end pt-4 border-t border-zinc-800">
+                <button type="submit" class="px-6 py-2 bg-white text-black text-sm font-bold rounded-md hover:bg-zinc-200 transition-colors">Salvar Alterações</button>
+            </div>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-zinc-800">
+            <h3 class="text-sm font-medium text-white mb-4">Documentação Anexa</h3>
+            <div class="flex items-end gap-3">
+                <div class="flex-1">
+                    <label class="text-xs font-medium text-zinc-500 uppercase mb-1 block">Substituir Arquivo (Alvará)</label>
+                    <input type="file" id="inputFileUpdate" class="block w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-300 hover:file:bg-zinc-700 cursor-pointer">
+                </div>
+                <button type="button" onclick="uploadAnexoUpdate({{entidade.id}})" class="px-4 py-2 bg-zinc-800 text-white text-xs font-bold rounded hover:bg-zinc-700 h-[38px]">Enviar</button>
+            </div>
+        </div>
+
+    </div>
+    <script type="module" src="/js/submit.js"></script>
+    
+    <script>
+        // 1. Pré-seleciona o organizador correto
+        document.getElementById('selOrganizador').value = "{{entidade.organizadorId}}";
+
+        // 2. Lógica de Upload Separado (Update)
+        async function uploadAnexoUpdate(id) {
+            const fileInput = document.getElementById('inputFileUpdate');
+            if(fileInput.files.length === 0) return alert("Selecione um arquivo para enviar.");
+            
+            const formData = new FormData();
+            formData.append('arquivo', fileInput.files[0]);
+            
+            try {
+                const resp = await fetch(`/upload/evento/${id}/alvara`, { method: 'POST', body: formData });
+                if(resp.ok) { 
+                    alert("Arquivo atualizado com sucesso!"); 
+                    // Opcional: window.location.reload(); 
+                } else {
+                    alert("Erro no upload do arquivo.");
+                }
+            } catch(e) {
+                console.error(e);
+                alert("Erro de conexão.");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Evento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap'); body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-zinc-950 text-zinc-300 flex justify-center items-center min-h-screen py-10">
+    <div class="w-full max-w-2xl">
+        <div class="flex items-center justify-between mb-8 border-b border-zinc-800 pb-4">
+            <div><h2 class="text-xl font-semibold text-white">Criar Evento</h2></div>
+            <a href="javascript:history.back()" class="text-sm text-zinc-400 hover:text-white">Cancelar</a>
+        </div>
+        
+        <form id="formulario" action="/create/evento" method="POST" class="space-y-6">
+            
+            <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">Nome do Evento</label>
+                <input type="text" name="nome" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <label class="text-xs font-medium text-zinc-400 uppercase">Data Início</label>
+                    <input type="date" name="dataInicio" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
+                <div class="grid gap-2">
+                    <label class="text-xs font-medium text-zinc-400 uppercase">Data Fim</label>
+                    <input type="date" name="dataFim" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
+            </div>
+
+            <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">Localidade</label>
+                <input type="text" name="localidade" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 items-end">
+                <div class="grid gap-2">
+                    <label class="text-xs font-medium text-zinc-400 uppercase">Organizador</label>
+                    <select name="organizadorId" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                        {{#organizadores}}<option value="{{id}}">{{nome}}</option>{{/organizadores}}
+                    </select>
+                </div>
+                
+                <div class="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 h-[38px]">
+                    <input type="checkbox" id="chkPrivado" name="privado" class="w-4 h-4 text-yellow-500 bg-zinc-800 border-zinc-700 rounded focus:ring-yellow-600 focus:ring-2 cursor-pointer">
+                    <label for="chkPrivado" class="text-sm font-medium text-zinc-300 select-none cursor-pointer">Evento Privado?</label>
+                </div>
+            </div>
+
+            <div id="areaPrivada" class="hidden p-4 border border-yellow-500/30 bg-yellow-500/5 rounded-lg transition-all duration-300">
+                <div class="grid gap-2">
+                    <label class="text-xs font-bold text-yellow-500 uppercase flex items-center gap-2">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        Senha de Acesso
+                    </label>
+                    <input type="text" id="inputSenha" name="senhaAcesso" class="w-full bg-zinc-950 border border-yellow-500/50 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors" placeholder="Defina a senha para os convidados">
+                </div>
+            </div>
+
+            <div class="grid gap-2 pt-4 border-t border-zinc-800">
+                <label class="text-xs font-medium text-zinc-400 uppercase flex justify-between">
+                    <span>Alvará / Licença (Opcional)</span>
+                    <span class="text-[10px] text-zinc-500 normal-case">PDF, JPG ou PNG</span>
+                </label>
+                
+                <input type="file" 
+                       id="inputArquivo" 
+                       name="arquivoAlvara" 
+                       data-url="/upload/evento/{id}/alvara" 
+                       data-method="POST"
+                       accept=".pdf,.jpg,.jpeg,.png"
+                       class="block w-full text-sm text-zinc-400
+                              file:mr-4 file:py-2 file:px-4
+                              file:rounded-full file:border-0
+                              file:text-xs file:font-semibold
+                              file:bg-zinc-800 file:text-zinc-300
+                              hover:file:bg-zinc-700 cursor-pointer">
+                
+                <p class="text-[10px] text-zinc-500">O arquivo será vinculado automaticamente após a criação do evento.</p>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-zinc-800">
+                <button type="submit" class="px-6 py-2 bg-white text-black text-sm font-bold rounded-md hover:bg-zinc-200 transition-colors shadow-lg shadow-white/10">Salvar Evento</button>
+            </div>
+        </form>
+    </div>
+    
+    <script type="module" src="/js/submit.js"></script>
+    <script type="module" src="/js/submitFile.js"></script>
+    
+    <script>
+        const form = document.getElementById('formulario');
+        const chk = document.getElementById('chkPrivado');
+        const area = document.getElementById('areaPrivada');
+        const inputSenha = document.getElementById('inputSenha');
+
+        chk.addEventListener('change', () => {
+            if (chk.checked) {
+                // Modo Privado
+                area.classList.remove('hidden');
+                inputSenha.setAttribute('required', 'required');
+                form.action = '/create/evento-privado'; 
+            } else {
+                // Modo Público (Padrão)
+                area.classList.add('hidden');
+                inputSenha.removeAttribute('required');
+                inputSenha.value = ''; 
+                form.action = '/create/evento';
+            }
+        });
+    </script>
+</body>
+</html>

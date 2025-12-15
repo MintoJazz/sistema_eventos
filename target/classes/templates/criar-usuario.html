@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Usuário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap'); body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-zinc-950 text-zinc-300 flex justify-center items-center min-h-screen py-10">
+    <div class="w-full max-w-lg">
+        <div class="flex items-center justify-between mb-8 border-b border-zinc-800 pb-4">
+            <div><h2 class="text-xl font-semibold text-white">Criar Usuário</h2></div>
+            <a href="javascript:history.back()" class="text-sm text-zinc-400 hover:text-white">Cancelar</a>
+        </div>
+        <form id="formulario" action="/create/usuario" method="POST" class="space-y-6">
+            <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">Nome Completo</label>
+                <input type="text" name="nome" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white">
+            </div>
+            <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">CPF</label>
+                <input type="text" name="cpf" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white">
+            </div>
+            <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">Email</label>
+                <input type="email" name="email" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white">
+            </div>
+             <div class="grid gap-2">
+                <label class="text-xs font-medium text-zinc-400 uppercase">Senha</label>
+                <input type="password" name="senha" required class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white">
+            </div>
+            <div class="flex justify-end pt-4 border-t border-zinc-800">
+                <button type="submit" class="px-6 py-2 bg-white text-black text-sm font-bold rounded-md hover:bg-zinc-200">Cadastrar</button>
+            </div>
+        </form>
+    </div>
+    <script type="module" src="/js/submit.js"></script>
+</body>
+</html>

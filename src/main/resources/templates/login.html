@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Sistema de Eventos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap'); body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-zinc-950 text-zinc-300 flex justify-center items-center min-h-screen">
+    <div class="w-full max-w-md p-8 bg-zinc-900/50 border border-zinc-800 rounded-xl shadow-2xl">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-white">Bem-vindo de volta</h1>
+            <p class="text-sm text-zinc-500 mt-2">Acesse sua conta para gerenciar eventos</p>
+        </div>
+
+        <form id="formulario" action="/login" method="POST" class="space-y-6">
+            <div>
+                <label class="block text-xs font-medium text-zinc-400 uppercase mb-2">Email</label>
+                <input type="email" name="email" required 
+                    class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-zinc-400 uppercase mb-2">Senha</label>
+                <input type="password" name="senha" required 
+                    class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+            </div>
+            <button type="submit" class="w-full bg-white text-black font-bold py-3 rounded-lg hover:bg-zinc-200 transition-colors">
+                Entrar
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-sm text-zinc-500">
+            Não tem uma conta? <a href="/create/usuario" class="text-white hover:underline">Cadastre-se</a>
+        </div>
+        
+        <div class="mt-8 pt-6 border-t border-zinc-800 grid grid-cols-3 gap-2 text-xs">
+            <button onclick="fillLogin('igor.avila@riogrande.ifrs.edu.br', 'admin123')" class="bg-zinc-800 p-2 rounded hover:bg-zinc-700">Igor (Admin)</button>
+            <button onclick="fillLogin('jaazielpm.jpm@gmail.com', 'aluno123')" class="bg-zinc-800 p-2 rounded hover:bg-zinc-700">Jaaziel (User)</button>
+            <button onclick="fillLogin('marcio.josue@riogrande.ifrs.edu.br', 'viewer123')" class="bg-zinc-800 p-2 rounded hover:bg-zinc-700">Marcio (Viewer)</button>
+        </div>
+    </div>
+
+    <script>
+        function fillLogin(u, p) {
+            document.querySelector('[name=email]').value = u;
+            document.querySelector('[name=senha]').value = p;
+            document.querySelector('button[type="submit"]').click();
+        }
+    </script>
+</body>
+</html>

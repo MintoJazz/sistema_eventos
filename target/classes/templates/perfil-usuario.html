@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Perfil | Sistema de Eventos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap'); body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-zinc-950 text-zinc-300 p-6 md:p-10 min-h-screen">
+    <div class="max-w-6xl mx-auto">
+        {{#evento}}
+        <div class="mb-10 flex justify-between items-end border-b border-zinc-800 pb-6">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 bg-zinc-800 rounded-full flex items-center justify-center text-2xl font-bold text-zinc-500">P</div>
+                <div>
+                    <h1 class="text-2xl font-bold text-white">{{nome}}</h1>
+                    <div class="text-sm text-zinc-500 flex gap-3">
+                        <span>{{email}}</span>
+                        <span>•</span>
+                        <span class="font-mono">{{cpf}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <a href="/" class="px-4 py-2 text-sm text-zinc-400 hover:text-white border border-zinc-800 rounded bg-zinc-900">Ir para Home</a>
+                <form action="/logout" method="POST">
+                    <button class="px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-950/30 border border-red-900/50 rounded transition-colors">Sair</button>
+                </form>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-white flex items-center gap-2">🎟️ Minhas Inscrições</h3>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg overflow-hidden">
+                    {{#eventos}}
+                    <a href="/read/evento/id/{{id}}" class="block p-4 hover:bg-zinc-800/50 border-b border-zinc-800 last:border-0 transition-colors">
+                        <div class="font-medium text-zinc-200">{{nome}}</div>
+                        <div class="text-xs text-zinc-500 mt-1">{{data}} • {{localidade}}</div>
+                        <span class="inline-block mt-2 text-[10px] uppercase font-bold text-emerald-500 bg-emerald-950/30 px-2 py-0.5 rounded">Confirmado</span>
+                    </a>
+                    {{/eventos}}
+                    {{^eventos}}<div class="p-6 text-center text-sm text-zinc-500">Nenhuma inscrição ativa.</div>{{/eventos}}
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-white flex items-center gap-2">🎤 Minha Agenda</h3>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg overflow-hidden">
+                    {{#palestras}}
+                    <div class="p-4 border-b border-zinc-800 last:border-0">
+                        <div class="font-medium text-white">{{nome}}</div>
+                        <div class="text-xs text-zinc-400 mt-1">{{dataHora}}</div>
+                        <div class="text-xs text-zinc-600 mt-1">Evento: {{evento.nome}}</div>
+                    </div>
+                    {{/palestras}}
+                    {{^palestras}}<div class="p-6 text-center text-sm text-zinc-500">Você não tem palestras agendadas.</div>{{/palestras}}
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-white flex items-center gap-2">📅 Eventos que Organizo</h3>
+                    <a href="/create/evento" class="text-xs bg-white text-black px-2 py-1 rounded font-bold hover:bg-zinc-200">+ Criar</a>
+                </div>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg overflow-hidden">
+                    {{#eventosOrganizados}}
+                    <div class="p-4 border-b border-zinc-800 last:border-0 flex justify-between items-center group">
+                        <div>
+                            <div class="font-medium text-zinc-200">{{nome}}</div>
+                            <div class="text-xs text-zinc-500">{{data}}</div>
+                        </div>
+                        <a href="/read/evento/id/{{id}}" class="text-xs text-zinc-500 group-hover:text-white bg-zinc-800 px-2 py-1 rounded transition-colors">Gerenciar</a>
+                    </div>
+                    {{/eventosOrganizados}}
+                    {{^eventosOrganizados}}
+                    <div class="p-6 text-center text-sm text-zinc-500">Torne-se um organizador criando seu primeiro evento!</div>
+                    {{/eventosOrganizados}}
+                </div>
+            </div>
+        </div>
+        {{/evento}}
+    </div>
+</body>
+</html>
